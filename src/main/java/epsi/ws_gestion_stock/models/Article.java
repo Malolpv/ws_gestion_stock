@@ -1,10 +1,9 @@
 package epsi.ws_gestion_stock.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import epsi.ws_gestion_stock.Dto.ArticleDTO;
+import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +15,9 @@ public class Article {
     private String name;
     private Integer quantity;
     private Double price;
+
+    @ManyToMany(mappedBy = "articles")
+    List<Order> orders;
 
     //Constructors
     public Article() {}
@@ -59,6 +61,14 @@ public class Article {
         this.price = price;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
 
     //Methods
 
@@ -81,5 +91,22 @@ public class Article {
     @Override
     public String toString() {
         return "Article{" + "id=" + this.id + ", name='" + this.name + '\'' + ", quantity='" + this.quantity + '\'' + ", price=" + this.price +'}';
+    }
+
+
+    public static List<ArticleDTO> mapToDTO(List<Article> list){
+        return list
+                .stream()
+                .map(Article::mapToDTO)
+                .toList();
+    }
+
+    public static ArticleDTO mapToDTO(Article article){
+        return new ArticleDTO(
+                article.getId(),
+                article.getName(),
+                article.getQuantity(),
+                article.getPrice()
+        );
     }
 }

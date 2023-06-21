@@ -1,5 +1,6 @@
 package epsi.ws_gestion_stock.controllers;
 
+import epsi.ws_gestion_stock.Dto.ArticleDTO;
 import epsi.ws_gestion_stock.controllers.Exceptions.ArticleNotFoundException;
 import epsi.ws_gestion_stock.models.Article;
 import epsi.ws_gestion_stock.repository.ArticleRepository;
@@ -21,23 +22,23 @@ public class ArticleController {
     }
 
     @GetMapping("")
-    List<Article> all() {
-        return articleRepository.findAll();
+    List<ArticleDTO> all() {
+        return Article.mapToDTO(articleRepository.findAll());
     }
 
     @PostMapping("")
-    Article newArticle(@RequestBody Article article){
-        return articleRepository.save(article);
+    ArticleDTO newArticle(@RequestBody Article article){
+        return Article.mapToDTO(articleRepository.save(article));
     }
 
     @GetMapping("/{id}")
-    Article one(@PathVariable Long id){
-        return articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+    ArticleDTO one(@PathVariable Long id){
+        return Article.mapToDTO(articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id)));
     }
 
     @PutMapping("/{id}")
-    Article replaceArticle(@RequestBody Article newArticle, @PathVariable Long id){
-        return articleRepository.findById(id).map(article -> {
+    ArticleDTO replaceArticle(@RequestBody Article newArticle, @PathVariable Long id){
+        return Article.mapToDTO(articleRepository.findById(id).map(article -> {
                     article.setName(newArticle.getName());
                     article.setQuantity(newArticle.getQuantity());
                     article.setPrice(newArticle.getPrice());
@@ -45,7 +46,7 @@ public class ArticleController {
                     }).orElseGet(() -> {
                         newArticle.setId(id);
                         return articleRepository.save(newArticle);
-                    });
+                    }));
     }
 
     @DeleteMapping("/{id}")
